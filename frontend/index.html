@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pokédex API</title>
+
+    <link rel="stylesheet" href="style/style.css">
+</head>
+
+<body>
+
+    <header class="cabecalho">
+        <div class="logo">
+            <span class="pokebola"></span>
+
+            <div>
+                <h1>Pokédex API</h1>
+                <p>Atividade prática para a cadeira de Arquitetura e Desenvolvimento de APIs</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="pesquisa">
+
+            <div class="campo-pesquisa">
+                <span class="icone-pesquisa">⌕</span>
+
+                <input
+                    type="text"
+                    id="inputPesquisa"
+                    placeholder="Pesquisar Pokémon..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <select id="fontePesquisa">
+                <option value="api">PokéAPI</option>
+                <option value="local">Minha Pokédex</option>
+            </select>
+
+        </section>
+
+        <section class="informacoes">
+
+            <div>
+                <h2 id="tituloResultados">PokéAPI</h2>
+                <p id="descricaoResultados">
+                    Pesquise Pokémon disponíveis na API externa.
+                </p>
+            </div>
+
+            <span id="contador">4 Pokémon</span>
+
+        </section>
+
+        <section
+            id="mensagem"
+            class="mensagem oculto">
+        </section>
+
+        <section
+            id="gridPokemon"
+            class="grid-pokemon">
+        </section>
+
+    </main>
+
+    <footer>
+        <p>
+            Projeto desenvolvido para a disciplina de
+            Arquitetura e Desenvolvimento de APIs
+        </p>
+    </footer>
+
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>

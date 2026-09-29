@@ -1,0 +1,306 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f5f7;
+    color: #242424;
+    min-height: 100vh;
+}
+
+.cabecalho {
+    background-color: #d93636;
+    color: white;
+    padding: 25px 8%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.logo h1 {
+    font-size: 28px;
+}
+
+.logo p {
+    margin-top: 4px;
+    opacity: 0.9;
+}
+
+.pokebola {
+    width: 48px;
+    height: 48px;
+    background:
+        linear-gradient(
+            to bottom,
+            #ffffff 0%,
+            #ffffff 43%,
+            #222222 43%,
+            #222222 57%,
+            #ffffff 57%,
+            #ffffff 100%
+        );
+    border: 4px solid #222;
+    border-radius: 50%;
+    position: relative;
+}
+
+.pokebola::after {
+    content: "";
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    background: white;
+    border: 4px solid #222;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.container {
+    width: 84%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.pesquisa {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    gap: 15px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.campo-pesquisa {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    border: 1px solid #d6d6d6;
+    border-radius: 8px;
+    padding: 0 15px;
+}
+
+.icone-pesquisa {
+    font-size: 22px;
+    color: #777;
+    margin-right: 10px;
+}
+
+.campo-pesquisa input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 14px 0;
+    font-size: 16px;
+}
+
+.pesquisa select {
+    min-width: 180px;
+    border: 1px solid #d6d6d6;
+    border-radius: 8px;
+    padding: 0 15px;
+    background: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.informacoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 35px 0 20px;
+}
+
+.informacoes h2 {
+    font-size: 22px;
+}
+
+.informacoes p {
+    color: #777;
+    margin-top: 5px;
+}
+
+#contador {
+    background: #e7e7e7;
+    color: #555;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+.grid-pokemon {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 22px;
+}
+
+.card-pokemon {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    min-height: 320px;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-pokemon:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+}
+
+.card-pokemon img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.numero {
+    display: block;
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.card-pokemon h3 {
+    font-size: 21px;
+    text-transform: capitalize;
+    margin-bottom: 14px;
+}
+
+.tipos {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.tipo {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #eeeeee;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.tipo.grass {
+    background: #dff2d8;
+}
+
+.tipo.poison {
+    background: #ead8ef;
+}
+
+.tipo.fire {
+    background: #f8d7d2;
+}
+
+.tipo.water {
+    background: #d8e9f7;
+}
+
+.tipo.electric {
+    background: #fff1bd;
+}
+
+.tipo.flying {
+    background: #e4e4f5;
+}
+
+.acoes {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 7px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.card-pokemon:hover .acoes {
+    opacity: 1;
+}
+
+.botao-acao {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.botao-acao:hover {
+    background: #dedede;
+    transform: scale(1.08);
+}
+
+.botao-adicionar {
+    color: #2e8b57;
+    font-weight: bold;
+}
+
+.botao-favorito {
+    color: #d69c00;
+}
+
+.botao-excluir {
+    color: #c92f2f;
+}
+
+.mensagem {
+    padding: 25px;
+    background: white;
+    border-radius: 10px;
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.oculto {
+    display: none;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+
+    .container {
+        width: 92%;
+    }
+
+    .pesquisa {
+        flex-direction: column;
+    }
+
+    .pesquisa select {
+        height: 45px;
+    }
+
+    .informacoes {
+        align-items: flex-start;
+        gap: 15px;
+        flex-direction: column;
+    }
+
+}
