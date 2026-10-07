@@ -262,3 +262,43 @@ async function buscarPokemonAPI(nome) {
     };
 
 }
+
+async function executarPesquisa() {
+
+    const termo = inputPesquisa.value.trim().toLowerCase();
+
+    if (fontePesquisa.value === "local") {
+        renderizarCards();
+        return;
+    }
+
+    if (termo.length < 2) {
+        pokemonsAPI = [];
+        renderizarCards();
+        return;
+    }
+
+    try {
+
+        mensagem.textContent = "Buscando Pokémon...";
+        mensagem.classList.remove("oculto");
+
+        const pokemon = await buscarPokemonAPI(termo);
+
+        pokemonsAPI = [pokemon];
+
+        renderizarCards();
+
+    } catch (erro) {
+
+        pokemonsAPI = [];
+
+        gridPokemon.innerHTML = "";
+
+        contador.textContent = "0 Pokémon";
+
+        mensagem.textContent = "Pokémon não encontrado.";
+        mensagem.classList.remove("oculto");
+
+    }
+}
