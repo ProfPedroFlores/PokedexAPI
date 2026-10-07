@@ -244,7 +244,7 @@ renderizarCards();
 async function buscarPokemonAPI(nome) {
     
     const resposta = await fetch(
-        `http://127.0.0.1:8000/externo/pokemon/${nome}`
+        `https://pokedexapi-zwmo.onrender.com/externo/pokemon/${nome}`
     );
 
     if (!resposta.ok) {
@@ -261,44 +261,4 @@ async function buscarPokemonAPI(nome) {
         imagem: pokemon.imagem
     };
 
-}
-
-async function executarPesquisa() {
-
-    const termo = inputPesquisa.value.trim().toLowerCase();
-
-    if (fontePesquisa.value === "local") {
-        renderizarCards();
-        return;
-    }
-
-    if (termo.length < 2) {
-        pokemonsAPI = [];
-        renderizarCards();
-        return;
-    }
-
-    try {
-
-        mensagem.textContent = "Buscando Pokémon...";
-        mensagem.classList.remove("oculto");
-
-        const pokemon = await buscarPokemonAPI(termo);
-
-        pokemonsAPI = [pokemon];
-
-        renderizarCards();
-
-    } catch (erro) {
-
-        pokemonsAPI = [];
-
-        gridPokemon.innerHTML = "";
-
-        contador.textContent = "0 Pokémon";
-
-        mensagem.textContent = "Pokémon não encontrado.";
-        mensagem.classList.remove("oculto");
-
-    }
 }
