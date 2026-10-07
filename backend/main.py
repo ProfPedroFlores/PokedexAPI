@@ -44,7 +44,7 @@ def inicio():
         response_model=PokemonExternoResponse
         )
 def buscar_pokemon(nome: str):
-
+    print(nome)
     url = f"https://pokeapi.co/api/v2/pokemon/{nome.lower()}"
 
     resposta = requests.get(url)
