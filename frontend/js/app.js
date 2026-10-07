@@ -1,35 +1,3 @@
-const pokemonsAPI = [
-    {
-        id: 1,
-        nome: "bulbasaur",
-        numero: 1,
-        tipos: ["grass", "poison"],
-        imagem: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
-    },
-    {
-        id: 4,
-        nome: "charmander",
-        numero: 4,
-        tipos: ["fire"],
-        imagem: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"
-    },
-    {
-        id: 7,
-        nome: "squirtle",
-        numero: 7,
-        tipos: ["water"],
-        imagem: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
-    },
-    {
-        id: 25,
-        nome: "pikachu",
-        numero: 25,
-        tipos: ["electric"],
-        imagem: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
-    }
-];
-
-
 let minhaPokedex = [
     {
         id: 25,
@@ -41,6 +9,8 @@ let minhaPokedex = [
     }
 ];
 
+// Criação variável para buscar da API
+let pokemonsAPI = [];
 
 const inputPesquisa = document.getElementById("inputPesquisa");
 const fontePesquisa = document.getElementById("fontePesquisa");
@@ -253,11 +223,14 @@ function excluirPokemon(id) {
 
 }
 
+// Boa prática para inserir um "timeout" entre requisições
+let temporizadorPesquisa;
 
-inputPesquisa.addEventListener(
-    "input",
-    renderizarCards
-);
+inputPesquisa.addEventListener("input", () => {
+    clearTimeout(temporizadorPesquisa);
+
+    temporizadorPesquisa = setTimeout(executarPesquisa, 500);
+});
 
 
 fontePesquisa.addEventListener(
@@ -267,3 +240,25 @@ fontePesquisa.addEventListener(
 
 
 renderizarCards();
+
+async function buscarPokemonAPI(nome) {
+    
+    const resposta = await fetch(
+        `http://127.0.0.1:8000/externo/pokemon/${nome}`
+    );
+
+    if (!resposta.ok) {
+        throw new Error("Pokémon não encontrado!");
+    }
+
+    const pokemon = await resposta.json();
+
+    return {
+        id: pokemon.numero,
+        nome: pokemon.nome,
+        numero: pokemon.numero,
+        tipos: pokemon.tipos,
+        imagem: pokemon.imagem
+    };
+
+}

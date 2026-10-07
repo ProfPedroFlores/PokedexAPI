@@ -1,16 +1,35 @@
 from fastapi import FastAPI, HTTPException
 
+from schemas import PokemonExternoResponse
+
 import requests
 
+# Criação de Tags automatizadas
+
+tags_metadata = [
+    {
+        "name": "Geral",
+        "description": "Operações gerais e informações sobre a API"
+    },
+    {
+        "name": "PokéAPI",
+        "description": "Operações responsáveis pela consulta de dados externos na PokéAPI"
+    },
+    {
+        "name": "Minha Pokédex",
+        "description": "Operações responsáveios pela gerenciamento dos Pokémons persistentes"
+    }
+]
 
 app = FastAPI(
     title="Pokédex API",
     description="API para consulta da PokéAPI e gerenciamento de uma Pokédex pessoal.",
-    version="1.0.0"
+    version="1.0.0",
+    openapi_tags=tags_metadata
 )
 
 
-@app.get("/")
+@app.get("/", tags=["Geral"], summary="Verificar funcionamento da API")
 def inicio():
     return {
         "mensagem": "Pokédex API funcionando!"
@@ -18,7 +37,12 @@ def inicio():
 
 
 
-@app.get("/externo/pokemon/{nome}")
+@app.get(
+        "/externo/pokemon/{nome}", 
+        tags=["PokéAPI"], 
+        summary="Pesquisar Pokémon na API",
+        response_model=PokemonExternoResponse
+        )
 def buscar_pokemon(nome: str):
 
     url = f"https://pokeapi.co/api/v2/pokemon/{nome.lower()}"
@@ -33,4 +57,16 @@ def buscar_pokemon(nome: str):
 
     dados = resposta.json()
 
-    return dados
+    # A PokéAPI retorna muitas informações
+    # Nossa aplicação selecionará apenas os dados necessários para o nosso cliente
+    pokemon = {
+        "numero": dados["id"],
+        "nome": dados["name"],
+        "imagem": dados["sprites"]["other"]["official-artwork"]["front_default"],
+        "tipos":[
+            tipo["type"]["name"]
+            for tipo in dados["types"]
+        ]
+    }
+
+    return pokemon
