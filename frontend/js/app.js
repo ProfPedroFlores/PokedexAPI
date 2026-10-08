@@ -20,7 +20,6 @@ const contador = document.getElementById("contador");
 const tituloResultados = document.getElementById("tituloResultados");
 const descricaoResultados = document.getElementById("descricaoResultados");
 
-
 function renderizarCards() {
 
     const termo = inputPesquisa.value.toLowerCase();
@@ -238,7 +237,6 @@ fontePesquisa.addEventListener(
     renderizarCards
 );
 
-
 renderizarCards();
 
 async function buscarPokemonAPI(nome) {
@@ -260,5 +258,43 @@ async function buscarPokemonAPI(nome) {
         tipos: pokemon.tipos,
         imagem: pokemon.imagem
     };
+
+}
+
+async function executarPesquisa(){
+
+    const termo = inputPesquisa.value.trim().toLowerCase();
+
+    if(fontePesquisa.value == "local") {
+        renderizarCards();
+        return;
+    }
+
+    if(termo.length < 2) {
+        pokemonsAPI = [];
+        renderizarCards();
+        return;
+    }
+
+    try {
+        mensagem.textContent = "Buscando Pokemon...";
+        mensagem.classList.remove("oculto");
+
+        const pokemon = await buscarPokemonAPI(termo);
+
+        pokemonsAPI = [pokemon];
+
+        renderizarCards();
+    }catch(erro) {
+        pokemonsAPI = [];
+
+        gridPokemon.innerHTML = "";
+
+        contador.textContent = "0 Pokemon";
+
+        mensagem.textContent = "Pokémon não encontrado";
+        mensagem.classList.remove("oculto");
+    }
+
 
 }

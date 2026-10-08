@@ -1,9 +1,15 @@
 from fastapi import FastAPI, HTTPException
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from schemas import PokemonExternoResponse
 
 import requests
 
+origins = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500"
+]
 # Criação de Tags automatizadas
 
 tags_metadata = [
@@ -26,6 +32,15 @@ app = FastAPI(
     description="API para consulta da PokéAPI e gerenciamento de uma Pokédex pessoal.",
     version="1.0.0",
     openapi_tags=tags_metadata
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
 @app.get("/", tags=["Geral"], summary="Verificar funcionamento da API")
