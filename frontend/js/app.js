@@ -234,15 +234,15 @@ inputPesquisa.addEventListener("input", () => {
 
 fontePesquisa.addEventListener(
     "change",
-    renderizarCards
+    executarPesquisa
 );
 
 renderizarCards();
 
 async function buscarPokemonAPI(nome) {
-    
+
     const resposta = await fetch(
-        `https://pokedexapi-zwmo.onrender.com/externo/pokemon/${nome}`
+        `http://127.0.0.1:8000/externo/pokemon/${nome}`
     );
 
     if (!resposta.ok) {
@@ -261,40 +261,165 @@ async function buscarPokemonAPI(nome) {
 
 }
 
-async function executarPesquisa(){
+async function executarPesquisa() {
 
     const termo = inputPesquisa.value.trim().toLowerCase();
+    const fonte = fontePesquisa.value;
 
-    if(fontePesquisa.value == "local") {
-        renderizarCards();
-        return;
-    }
-
-    if(termo.length < 2) {
-        pokemonsAPI = [];
-        renderizarCards();
-        return;
-    }
 
     try {
-        mensagem.textContent = "Buscando Pokemon...";
+
+        mensagem.textContent = "Buscando Pokémon...";
         mensagem.classList.remove("oculto");
 
-        const pokemon = await buscarPokemonAPI(termo);
 
-        pokemonsAPI = [pokemon];
+        // =========================
+        // PESQUISA NA POKÉAPI
+        // =========================
+
+        if (fonte === "api") {
+
+            if (termo.length < 2) {
+                pokemonsAPI = [];
+                renderizarCards();
+                return;
+            }
+
+            const pokemon = await buscarPokemonAPI(termo);
+
+            pokemonsAPI = [pokemon];
+        }
+
+
+        // =========================
+        // PESQUISA NO NOSSO BANCO
+        // =========================
+
+        else {
+
+            minhaPokedex = await buscarMinhaPokedex(termo);
+
+        }
+
 
         renderizarCards();
-    }catch(erro) {
-        pokemonsAPI = [];
+
+
+    } catch (erro) {
 
         gridPokemon.innerHTML = "";
 
-        contador.textContent = "0 Pokemon";
+        contador.textContent = "0 Pokémon";
 
-        mensagem.textContent = "Pokémon não encontrado";
+        mensagem.textContent =
+            "Não foi possível realizar a busca.";
+
         mensagem.classList.remove("oculto");
+
+    }
+}
+
+async function buscarMinhaPokedex(nome = "") {
+
+    let url = "http://127.0.0.1:8000/pokemons";
+
+
+    // Caso exista um termo de pesquisa,
+    // enviamos como Query Parameter.
+    if (nome) {
+        url += `?nome=${encodeURIComponent(nome)}`;
     }
 
+
+    const resposta = await fetch(url);
+
+
+    if (!resposta.ok) {
+        throw new Error("Erro ao consultar a Pokédex.");
+    }
+
+
+    const dados = await resposta.json();
+
+
+    return dados.map(pokemon => ({
+        id: pokemon.id,
+
+        // Guardamos também o ID externo porque
+        // precisaremos dele em outras operações.
+        pokeapi_id: pokemon.pokeapi_id,
+
+        nome: pokemon.nome,
+        numero: pokemon.numero,
+
+        tipos: [
+            pokemon.tipo_primario,
+            pokemon.tipo_secundario
+        ].filter(Boolean),
+
+        imagem: pokemon.sprite_url,
+        favorito: pokemon.favorito
+    }));
+}
+
+async function adicionarPokemon(id) {
+
+    const pokemon = pokemonsAPI.find(
+        pokemon => pokemon.id === id
+    );
+
+
+    if (!pokemon) {
+        return;
+    }
+
+
+    const dados = {
+        pokeapi_id: pokemon.id,
+        nome: pokemon.nome,
+        numero: pokemon.numero,
+        sprite_url: pokemon.imagem,
+        tipo_primario: pokemon.tipos[0],
+        tipo_secundario: pokemon.tipos[1] || null
+    };
+
+
+    const resposta = await fetch(
+        "http://127.0.0.1:8000/pokemons",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(dados)
+        }
+    );
+
+
+    if (resposta.status === 409) {
+
+        alert(
+            "Este Pokémon já está na sua Pokédex."
+        );
+
+        return;
+    }
+
+
+    if (!resposta.ok) {
+
+        alert(
+            "Não foi possível adicionar o Pokémon."
+        );
+
+        return;
+    }
+
+
+    alert(
+        `${pokemon.nome} foi adicionado à sua Pokédex!`
+    );
 
 }
