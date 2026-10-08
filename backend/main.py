@@ -1,10 +1,22 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from schemas import PokemonExternoResponse
+from database import engine, get_db
+
+from schemas import (
+    PokemonExternoResponse,
+    PokemonCreate,
+    PokemonResponse
+)
 
 import requests
+
+import models
+
+from sqlalchemy.orm import Session
+
+models.Base.metadata.create_all(bind=engine)
 
 origins = [
     "http://127.0.0.1:5500",
@@ -49,8 +61,6 @@ def inicio():
         "mensagem": "Pokédex API funcionando!"
     }
 
-
-
 @app.get(
         "/externo/pokemon/{nome}", 
         tags=["PokéAPI"], 
@@ -84,3 +94,73 @@ def buscar_pokemon(nome: str):
     }
 
     return pokemon
+
+@app.post(
+    "/pokemons",
+    tags=["Minha Pokédex"],
+    summary="Adicionar Pokémon à Pokédex",
+    status_code=201,
+    response_model=PokemonResponse
+)
+def adicionar_pokemon(
+    pokemon: PokemonCreate,
+    db: Session = Depends(get_db)
+):
+
+    # Verifica se o Pokémon já foi cadastrado.
+    pokemon_existente = db.query(models.Pokemon).filter(
+        models.Pokemon.pokeapi_id == pokemon.pokeapi_id
+    ).first()
+
+
+    if pokemon_existente:
+
+        raise HTTPException(
+            status_code=409,
+            detail="Este Pokémon já está cadastrado na Pokédex."
+        )
+
+
+    # Converte os dados recebidos pelo Schema
+    # em uma entidade do nosso Model.
+    novo_pokemon = models.Pokemon(
+        pokeapi_id=pokemon.pokeapi_id,
+        nome=pokemon.nome,
+        numero=pokemon.numero,
+        sprite_url=pokemon.sprite_url,
+        tipo_primario=pokemon.tipo_primario,
+        tipo_secundario=pokemon.tipo_secundario
+    )
+
+
+    # Adiciona o objeto à sessão.
+    db.add(novo_pokemon)
+
+
+    # Confirma a operação no banco.
+    db.commit()
+
+
+    # Atualiza o objeto Python com os valores
+    # gerados pelo banco, como ID e data.
+    db.refresh(novo_pokemon)
+
+
+    return novo_pokemon
+
+@app.get(
+    "/pokemons",
+    tags=["Minha Pokédex"],
+    summary="Listar Pokémon da Pokédex",
+    response_model=list[PokemonResponse]
+)
+def listar_pokemons(
+    db: Session = Depends(get_db)
+):
+
+    # Consulta todos os Pokémon cadastrados.
+    pokemons = db.query(models.Pokemon).all()
+
+    return pokemons
+
+
